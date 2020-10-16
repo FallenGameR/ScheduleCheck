@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "ScheduleCheck": {
+      "commandName": "Project",
+      "commandLineArgs": "lock"
+    }
+  }
+}
