@@ -8,7 +8,7 @@ namespace ScheduleCheck
 {
     public partial class Form1 : Form
     {
-        private const string controlFile = @"\\sekirei\control\allowed_time.txt";
+        private const string controlFile = @"\\tp-share\sda1\control\allowed_time.txt";
 
         private static readonly (DateTime start, DateTime end) defaultAllowedTime = 
             (DateTime.Parse("8:00am"), DateTime.Parse("8:00pm"));
@@ -70,16 +70,12 @@ namespace ScheduleCheck
             {
                 if (this.IsLockEnabled)
                 {
-                    //LockWorkStation();
+                    LockWorkStation();
                 }
                 else
                 {
                     MessageBox.Show("Lock");
                 }
-            }
-            else
-            {
-                MessageBox.Show("Timer");
             }
         }
     }
