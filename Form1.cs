@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
-using System.IO;
 using System.Linq;
+using System.Net;
 
 namespace ScheduleCheck
 {
     public partial class Form1 : Form
     {
-        private const string controlFile = @"\\tp-share\sda1\control\allowed_time.txt";
+        private const string controlFile = @"ftp://tp-share/sda1/control/allowed_time.txt";
 
         private static readonly (DateTime start, DateTime end) defaultAllowedTime = 
             (DateTime.Parse("8:00am"), DateTime.Parse("8:00pm"));
@@ -24,9 +24,9 @@ namespace ScheduleCheck
         {
             get
             {
-                var allowed = GetAllowedTime();
                 var now = DateTime.Now;
-                return allowed.start <= now && now <= allowed.end;
+                var (start, end) = GetAllowedTime();
+                return (start <= now) && (now <= end);
             }
         }
 
@@ -50,18 +50,17 @@ namespace ScheduleCheck
         {
             try
             {
-                if (File.Exists(controlFile))
-                {
-                    var lines = File.ReadAllLines(controlFile);
-                    return (DateTime.Parse(lines[0]), DateTime.Parse(lines[1]));
-                }
+                using var client = new WebClient();
+                var text = client.DownloadString(controlFile);
+                var lines = text.Split(
+                    new[] { "\r\n" }, 
+                    StringSplitOptions.RemoveEmptyEntries);
+                return (DateTime.Parse(lines[0]), DateTime.Parse(lines[1]));
             }
             catch (Exception)
             {
                 return defaultAllowedTime;
             }
-
-            return defaultAllowedTime;
         }
 
         private void Timer_Tick(object sender, EventArgs e)
